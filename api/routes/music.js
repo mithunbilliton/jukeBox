@@ -7,6 +7,6 @@ router.get("/",  musicController.getAllMusics);
 router.post("/", upload.upload.single("music"), musicController.addNewMusic);
 router.get("/getByMusician",  musicController.getByMusician);
 router.get("/getMusicians",  musicController.getMusicians);
-//router.delete("/:musicId", musicController.deleteMusic);
+router.put("/", musicController.updateOrInsertMusician);
 
 module.exports = router;

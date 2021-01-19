@@ -71,6 +71,38 @@ exports.addNewMusic = async (req, res) => {
   }
 };
 
+
+exports.updateOrInsertMusician = async (req, res) => {
+  console.log("musssssssssssss",req.body);
+  let  name = req.body.id;
+  let  musicianType = req.body.musicianType;
+  //let query = {albumName: album}
+  let query = {}
+  console.log("query",query);
+  try {
+    let result = await Music.update({
+      artist: {
+          "$not": {
+              "$elemMatch": {
+                  "name": name
+              }
+          }
+      }
+  }, {
+      $set: {
+          visits: {
+              "name": name,
+              "musicianType": musicianType
+          }
+      }
+  }, {upsert:true, multi: true });
+    
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 // exports.deleteMusic = async (req, res) => {
 //   try {
 //     const id = req.params.musicId;
