@@ -13,7 +13,6 @@ exports.getAllMusics = async (req, res) => {
 };
 
 exports.getByMusician = async (req, res) => {
-  console.log("musssssssssssss",req.query.name);
   let  musician = req.query.name
   let query = {artist: {$elemMatch: {name:musician}}}
   
@@ -27,7 +26,6 @@ exports.getByMusician = async (req, res) => {
 };
 
 exports.getMusicians = async (req, res) => {
-  console.log("musssssssssssss",req.query.album);
   let  album = req.query.album;
   //let query = {albumName: album}
   let aggregate = [{
@@ -50,7 +48,6 @@ exports.getMusicians = async (req, res) => {
 };
 
 exports.addNewMusic = async (req, res) => {
-  //console.log("qqqqqqqqqqqqqqq",req.body)
   try {
     const music = new Music({
       albumName:req.body.albumName,
@@ -73,29 +70,31 @@ exports.addNewMusic = async (req, res) => {
 
 
 exports.updateOrInsertMusician = async (req, res) => {
-  console.log("musssssssssssss",req.body);
-  let  name = req.body.id;
+  let album = req.body.albumName;
+  let  name = req.body.name;
   let  musicianType = req.body.musicianType;
   //let query = {albumName: album}
   let query = {}
   console.log("query",query);
   try {
     let result = await Music.update({
-      artist: {
+      "$and":[{albumName:album},
+      {artist: {
           "$not": {
-              "$elemMatch": {
-                  "name": name
-              }
+            "$elemMatch": {
+                "name": name
+            }
+            
           }
-      }
+      }}]
   }, {
-      $set: {
-          visits: {
+      $addToSet: {
+        artist: {
               "name": name,
               "musicianType": musicianType
           }
       }
-  }, {upsert:true, multi: true });
+  }, { multi: true });
     
     res.status(200).json(result);
   } catch (err) {
@@ -103,15 +102,9 @@ exports.updateOrInsertMusician = async (req, res) => {
   }
 };
 
-// exports.deleteMusic = async (req, res) => {
-//   try {
-//     const id = req.params.musicId;
-//     let result = await Music.remove({ _id: id });
-//     res.status(200).json(result);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// };
+
+
+
 const sortAscending = (data) => {
   let swapped = false
   const resultArray = [...data]

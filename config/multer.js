@@ -1,12 +1,13 @@
 let multer = require("multer");
 const path = require("path");
+let moment = require("moment");
 
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
     cb(null, "./uploads");
   },
   filename: (req, file, cb) => {
-    cb(null, "audio"+file.originalname);
+    cb(null, moment.now() + file.originalname);
   }
 });
 
